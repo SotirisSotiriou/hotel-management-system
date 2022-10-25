@@ -1,0 +1,17 @@
+{
+    "name": "vendor/hums-api",
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sotiris Sotiriou",
+            "email": "sotiriou.sot@yahoo.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
