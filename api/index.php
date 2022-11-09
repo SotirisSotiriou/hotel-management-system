@@ -2,14 +2,54 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . "/vendor/autoload.php";
+require __DIR__ . "/bootstrap.php";
 
-set_error_handler("ErrorHandler::handleError");
-set_exception_handler("ErrorHandler::handleException");
+$parts = explode("/", $_SERVER['REQUEST_URI']);
 
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
+$service = $parts[2];
 
-header("Content-type: application/json; charset=UTF-8");
+$services = ["reservation", "room", "customer"];
 
-var_dump($_POST);
+if(!in_array($service, $services)){
+    http_response_code(404);
+    exit;
+}
+
+$database = new Database(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_NAME'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS']
+);
+
+$user_gateway = new UserGateway($database);
+
+$codec = new JWTCodec($_ENV['SECRET_KEY']);
+
+$auth = new Auth($user_gateway, $codec);
+
+if(!$auth->authenticateAccessToken()){
+    exit;
+}
+
+$user_id = $auth->getUserID();
+
+switch($service){
+    case "reservation":
+        echo "reservation service";
+        
+        break;
+    case "room":
+        echo "room management";
+
+        break;
+    case "customer":
+        echo "customer service";
+
+        break;
+    default:
+        
+}
+
+
+
