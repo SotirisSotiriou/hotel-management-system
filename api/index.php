@@ -8,6 +8,8 @@ $parts = explode("/", $_SERVER['REQUEST_URI']);
 
 $service = $parts[2];
 
+$id = $parts[3] ?? null;
+
 $services = ["reservation", "room", "customer"];
 
 if(!in_array($service, $services)){
@@ -34,22 +36,24 @@ if(!$auth->authenticateAccessToken()){
 
 $user_id = $auth->getUserID();
 
-switch($service){
-    case "reservation":
-        echo "reservation service";
-        
-        break;
-    case "room":
-        echo "room management";
+echo "successful call";
 
-        break;
-    case "customer":
-        echo "customer service";
-
-        break;
-    default:
+// switch($service){
+//     case "reservation":
+//         echo "reservation service";
         
-}
+//         break;
+//     case "room":
+//         echo "room management";
+
+//         break;
+//     case "customer":
+//         echo "customer service";
+
+//         break;
+//     default:
+        
+// }
 
 
 
