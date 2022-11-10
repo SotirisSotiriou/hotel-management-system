@@ -8,7 +8,46 @@ class ReceptionController{
 
 
     public function processRequest(string $method, string $service, ?string $id): void{
-        //TODO
+        if($id === null){
+            if($method === "POST"){
+                if($service === "reservation"){
+                    //TODO
+                }
+                else if($service === "room"){
+                    //TODO
+                }
+                else if($service === "customer"){
+                    //TODO
+                }
+                else{
+                    respondServiceNotFound();
+                    return;
+                }
+
+            }
+            else{
+                respondMethodNotAllowed("POST");
+                return;
+            }
+        }
+        else{
+            switch($method){
+                case "GET":
+                    //TODO
+                    break;
+                case "PATCH":
+                    //TODO
+                    break;
+                case "DELETE":
+                    //TODO
+                    break;
+                default:
+                    respondMethodNotAllowed("GET, PATCH, DELETE");
+                    return;
+            }
+        }
+
+        
     }
 
 
@@ -21,6 +60,11 @@ class ReceptionController{
     private function respondMethodNotAllowed(string $allowed_methods): void{
         http_response_code(405);
         header("Allow: $allowed_methods");
+    }
+
+    private function respondServiceNotFound(){
+        http_response_code(404);
+        echo json_encode(["message" => "Service not found"]);
     }
 
 
@@ -59,11 +103,50 @@ class ReceptionController{
     }
 
 
-    private function getValidationErrors(array $data, bool $is_new = true){
+    private function getValidationErrors(array $data, string $service, string $method){
         $errors = [];
 
-        //TODO
+        if($method === "POST"){
+            if($service === "reservation"){
+                //TODO
+            }
+            else if($service === "room"){
+                if(empty($data["number"])){
+                    $errors[] = "number is required";
+                }else if(filter_var($data["number"], FILTER_VALIDATE_INT) === false){
+                    $errors[] = "room number must be an integer";
+                }
+    
+                if(empty($data["type"])){
+                    $errors[] = "type is required";
+                }
+    
+                if(empty($data["beds"])){
+                    $errors[] = "beds number required";
+                }else if(filter_var($data["beds"], FILTER_VALIDATE_INT) === false){
+                    $errors[] = "beds number must be an integer";
+                }
+    
+                if(empty($data["cost_per_day"])){
+                    $errors[] = "cost_per_day is required";
+                }else if(filter_var($data["cost_per_day"], FILTER_VALIDATE_FLOAT) === false){
+                    $errors[] = "cost must be a decimal number";
+                }
+            }
+            else if($service === "customer"){
+                if(empty($data["firstname"])){
+                    $errors[] = "firstname is required";
+                }
+    
+                if(empty($data["lastname"])){
+                    $errors[] = "lastname is required";
+                }
+            }
 
-        return $error;
+            //TODO: implementation for GET, PATCH and DELETE methods
+        }
+
+
+        return $errors;
     }
 }

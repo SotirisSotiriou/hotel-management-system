@@ -78,7 +78,45 @@ class ReceptionGateway{
 
 
     public function updateRoomInfo(int $id, array $data): int{
-        //TODO
+        $fields = [];
+
+        if(array_key_exists("beds", $data)){
+            $fields["beds"] = [$data["beds"], PDO::PARAM_INT];
+        }
+
+        if(array_key_exists("number", $data)){
+            $fields["number"] = [$data["number"], PDO::PARAM_INT];
+        }
+
+        if(array_key_exists("type", $data)){
+            $fields["type"] = [$data["type"], PDO::PARAM_STR];
+        }
+
+        if(array_key_exists("cost_per_day", $data)){
+            $fields["cost_per_day"] = [$data["cost_per_day"], PDO::PARAM_STR];
+        }
+
+        if(empty($fields)){
+            return 0;
+        }else{
+            $sets = array_map(function($value){
+                return "$value = :$value";
+            }, array_keys($fields));
+
+            $sql = "UPDATE room SET " . implode(", ", $sets) . " WHERE id = :id";
+
+            $stmt = $this->prepare($sql);
+
+            $stmt->bindValue(":id", $id);
+
+            foreach($fields as $name => $values){
+                $stmt->bindValue(":$name", $values[0], $values[1]);
+            }
+
+            $stmt->execute();
+
+            return $stmt->rowCount();
+        }
     }
 
 
@@ -108,8 +146,8 @@ class ReceptionGateway{
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindValue(":customer_id", $data["customer_id"], PDO::PARAM_INT);
-        //TODO: bind checkin value
-        //TODO: bind checkout value
+        $stmt->bindValue(":checkin", date("Y-m-d H:i:s", strtotime($data["checkin"])), PDO::PARAM_STR);
+        $stmt->bindValue(":checkout", date("Y-m-d H:i:s", strtotime($data["checkout"])), PDO::PARAM_STR);
         $stmt->bindValue(":room_id", $data["room_id"], PDO::PARAM_INT);
         $stmt->bindValue(":billed", $data["billed"], PDO::PARAM_BOOL);
         $stmt->bindValue(":breakfast". $data["breakfast"], PDO::PARAM_BOOL);
@@ -136,7 +174,61 @@ class ReceptionGateway{
 
 
     public function updateReservationInfo(int $id, array $data): int{
-        //TODO
+        $fields = [];
+
+        if(array_key_exists("customer_id", $data)){
+            $fields["customer_id"] = [$data["customer_id"], PDO::PARAM_INT];
+        }
+
+        if(array_key_exists("checkin", $data)){
+            $fields["checkin"] = [date("Y-m-d H:i:s", $data["checkin"]), PDO::PARAM_STR];
+        }
+
+        if(array_key_exists("checkout", $data)){
+            $fields["checkout"] = [date("Y-m-d H:i:s", $data["checkout"]), PDO::PARAM_STR];
+        }
+
+        if(array_key_exists("room_id")){
+            $fields["room_id"] = [$data["room_id"], PDO::PARAM_INT];
+        }
+
+        if(array_key_exists("billed", $data)){
+            $fields["billed"] = [$data["billed"], PDO::PARAM_BOOL];
+        }
+
+        if(array_key_exists("breakfast", $data)){
+            $fields["breakfast"] = [$data["breakfast"], PDO::PARAM_BOOL];
+        }
+
+        if(array_key_exists("lunch", $data)){
+            $fields["lunch"] = [$data["lunch"], PDO::PARAM_BOOL];
+        }
+
+        if(array_key_exists("dinner", $data)){
+            $fields["dinner"] = [$data["dinner"], PDO::PARAM_BOOL];
+        }
+
+        if(empty($fields)){
+            return 0;
+        }else{
+            $sets = array_map(function($value){
+                return "$value = :$value";
+            }, array_keys($fields));
+
+            $sql = "UPDATE room_reservation SET " . implode(", ", $sets) . " WHERE id = :id";
+
+            $stmt = $this->prepare($sql);
+
+            $stmt->bindValue(":id", $id);
+
+            foreach($fields as $name => $values){
+                $stmt->bindValue(":$name", $values[0], $values[1]);
+            }
+
+            $stmt->execute();
+
+            return $stmt->rowCount();
+        }
     }
 
 //Customer features
@@ -202,6 +294,40 @@ class ReceptionGateway{
 
 
     public function updateCustomerInfo(int $id, array $data): int{
-        //TODO
+        $fields = [];
+
+        if(array_key_exists("firstname", $data)){
+            $fields["firstname"] = [$data["firstname"], PDO::PARAM_STR];
+        }
+
+        if(array_key_exists("lastname", $data)){
+            $fields["lastname"] = [$data["lastname"], PDO::PARAM_STR];
+        }
+
+        if(array_key_exists("phone", $data)){
+            $fields["phone"] = [$data["phone"], PDO::PARAM_STR];
+        }
+
+        if(empty($fields)){
+            return 0;
+        }else{
+            $sets = array_map(function($value){
+                return "$value = :$value";
+            }, array_keys($fields));
+
+            $sql = "UPDATE customer SET " . implode(", ", $sets) . " WHERE id = :id";
+
+            $stmt = $this->prepare($sql);
+
+            $stmt->bindValue(":id", $id);
+
+            foreach($fields as $name => $values){
+                $stmt->bindValue(":$name", $values[0], $values[1]);
+            }
+
+            $stmt->execute();
+
+            return $stmt->rowCount();
+        }
     }
 }
