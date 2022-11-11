@@ -36,7 +36,12 @@ if(!$auth->authenticateAccessToken()){
 
 $user_id = $auth->getUserID();
 
-echo "successful call";
+$reception_gateway = new ReceptionGateway($database);
+
+$reception_controller = new ReceptionController($reception_gateway);
+
+$reception_controller->processRequest($_SERVER["REQUEST_METHOD"], $service, $id);
+
 
 // switch($service){
 //     case "reservation":

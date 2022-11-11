@@ -1,53 +1,145 @@
 <?php
 
 class ReceptionController{
-    
-    public function __construct(private ReceptionGateway $gateway){
 
+    private ReceptionGateway $gateway;
+    
+    public function __construct(ReceptionGateway $gateway){
+        $this->gateway = $gateway;
     }
 
 
     public function processRequest(string $method, string $service, ?string $id): void{
         if($id === null){
             if($method === "POST"){
+                $data = $_POST;
+
                 if($service === "reservation"){
                     //TODO
+                    echo "add reservation call";
                 }
                 else if($service === "room"){
                     //TODO
+                    echo "add room call";
                 }
                 else if($service === "customer"){
                     //TODO
+                    echo "add customer call";
                 }
                 else{
-                    respondServiceNotFound();
-                    return;
+                    $this->respondServiceNotFound();
                 }
 
             }
+            else if($method === "GET"){
+                if($service === "reservation"){
+                    $reservations = $this->gateway->getAllReservations();
+                    if($reservations === false){
+                        $this->respondEmptyData();
+                    }
+                    else{
+                        echo json_encode($reservations);
+                    }
+                }
+                else if($service === "room"){
+                    $rooms = $this->gateway->getAllRooms();
+                    if($rooms === false){
+                        $this->respondEmptyData();
+                    }
+                    else{
+                        echo json_encode($rooms);
+                    }            
+                }
+                else if($service === "customer"){
+                    $customers = $this->gateway->getAllCustomers();
+                    if($customers === false){
+                        $this->respondEmptyData();
+                    }
+                    else{
+                        echo json_encode($customers);
+                    }
+                }
+                else{
+                    $this->respondServiceNotFound();
+                }
+            }
             else{
-                respondMethodNotAllowed("POST");
-                return;
+                $this->respondMethodNotAllowed("POST");
             }
         }
         else{
             switch($method){
                 case "GET":
-                    //TODO
+                    if($service === "reservation"){
+                        $reservation = $this->gateway->getReservasionInfo((int)$id);
+                        if($reservation === false){
+                            $this->respondReservationNotFound($id);
+                        }
+                        else{
+                            echo json_encode($reservation);
+                        }
+                    }
+                    else if($service === "room"){
+                        if($id === "available"){
+                            //TODO
+                        }
+                        else if(!filter_var($id, FILTER_VALIDATE_INT) === false){
+                            $room = $this->gateway->getRoomByID((int)$id);
+                            if($room === false){
+                                $this->respondRoomNotFound($id);
+                            }
+                            else{
+                                echo json_encode($room);
+                            }
+                        }
+                        else{
+                            $this->respondUnprocessableEntity(["wrong id format"]);
+                        }
+                    }
+                    else if($service === "customer"){
+                        if(!filter_var($id, FILTER_VALIDATE_INT) === false){
+                            $customer = $this->gateway->getCustomerByID((int)$id);
+                            if($customer === false){
+                                $this->respondCustomerNotFound($id);
+                            }
+                            else{
+                                echo json_encode($customer);
+                            }
+                        }
+                        else{
+                            $this->respondUnprocessableEntity("wrong id format");
+                        }
+                    }
                     break;
                 case "PATCH":
-                    //TODO
+                    if($service === "reservation"){
+                        //TODO
+                    }
+                    else if($service === "room"){
+                        //TODO
+                    }
+                    else if($service === "customer"){
+                        //TODO
+                    }
                     break;
                 case "DELETE":
-                    //TODO
+                    if($service === "reservation"){
+                        //TODO
+                    }
+                    else if($service === "room"){
+                        //TODO
+                    }
+                    else if($service === "customer"){
+                        //TODO
+                    }
                     break;
                 default:
-                    respondMethodNotAllowed("GET, PATCH, DELETE");
-                    return;
+                    $this->respondMethodNotAllowed("GET, PATCH, DELETE");
+                    break;
             }
         }
 
-        
+        return;
     }
 
 
@@ -102,6 +194,11 @@ class ReceptionController{
         echo json_encode(["message" => "Customer created", "id" => $id]);
     }
 
+    private function respondEmptyData(){
+        http_response_code(404);
+        echo json_encode(["message" => "Empty data"]);
+    }
+
 
     private function getValidationErrors(array $data, string $service, string $method){
         $errors = [];
@@ -143,9 +240,19 @@ class ReceptionController{
                 }
             }
 
-            //TODO: implementation for GET, PATCH and DELETE methods
         }
-
+        else if($method === "PATCH"){
+            if($service === "reservation"){
+                //TODO
+                
+            }
+            else if($service === "room"){
+                //TODO
+            }
+            else if($service === "customer"){
+                //TODO
+            }
+        }
 
         return $errors;
     }

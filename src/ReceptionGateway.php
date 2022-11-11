@@ -3,13 +3,13 @@
 class ReceptionGateway{
     private PDO $conn;
 
-    public function __constructor(Database $database){
+    public function __construct(Database $database){
         $this->conn = $database->getConnection();
     }
 
 //Room features
 
-    public function getAllRooms(): array{
+    public function getAllRooms(): array | false{
         $sql = "SELECT * 
                 FROM room";
 
@@ -21,6 +21,10 @@ class ReceptionGateway{
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
             $data[] = $row;
+        }
+
+        if(empty($data)){
+            return false;
         }
 
         return $data;
@@ -121,6 +125,29 @@ class ReceptionGateway{
 
 
 //Reservation features
+
+    public function getAllReservations(): array | false{
+        $sql = "SELECT *
+                FROM room_reservation
+                ORDER BY id DESC";
+        
+        $stmt = $this->conn-prepare($sql);
+
+        $stmt->execute();
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            $data[] = $row;
+        }
+
+        if(empty($data)){
+            return false;
+        }
+        
+        return $data;
+    }
+    
 
     public function getReservasionInfo(int $id): array | false{
         $sql = "SELECT * 
