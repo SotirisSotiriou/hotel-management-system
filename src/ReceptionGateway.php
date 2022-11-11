@@ -173,8 +173,8 @@ class ReceptionGateway{
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindValue(":customer_id", $data["customer_id"], PDO::PARAM_INT);
-        $stmt->bindValue(":checkin", date("Y-m-d H:i:s", strtotime($data["checkin"])), PDO::PARAM_STR);
-        $stmt->bindValue(":checkout", date("Y-m-d H:i:s", strtotime($data["checkout"])), PDO::PARAM_STR);
+        $stmt->bindValue(":checkin", date("Y-m-d", strtotime($data["checkin"])), PDO::PARAM_STR);
+        $stmt->bindValue(":checkout", date("Y-m-d", strtotime($data["checkout"])), PDO::PARAM_STR);
         $stmt->bindValue(":room_id", $data["room_id"], PDO::PARAM_INT);
         $stmt->bindValue(":billed", $data["billed"], PDO::PARAM_BOOL);
         $stmt->bindValue(":breakfast". $data["breakfast"], PDO::PARAM_BOOL);
