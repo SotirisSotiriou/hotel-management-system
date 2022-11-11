@@ -64,7 +64,7 @@ class ReceptionGateway{
 
         $stmt->execute();
 
-        return $stmt->conn->lastInsertId();
+        return $this->conn->lastInsertId();
     }
 
     
