@@ -49,18 +49,20 @@ class ReceptionGateway{
 
     public function getAllAvailableRooms(): array | false{
         //TODO
+
     }
 
 
     public function createNewRoom(array $data): string{
-        $sql = "INSERT INTO room (beds, type, cost_per_day) 
-                VALUES (:beds, :type, :cost_per_day)";
+        $sql = "INSERT INTO room (beds, type, cost_per_day, number) 
+                VALUES (:beds, :type, :cost_per_day, :number)";
 
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindValue(":beds", $data["beds"], PDO::PARAM_INT);
         $stmt->bindValue(":type", $data["type"], PDO::PARAM_STR);
         $stmt->bindValue(":cost_per_day", $data["cost_per_day"], PDO::PARAM_STR);
+        $stmt->bindValue(":number", $data["number"], PDO::PARAM_INT);
 
         $stmt->execute();
 
@@ -172,14 +174,19 @@ class ReceptionGateway{
 
         $stmt = $this->conn->prepare($sql);
 
+        $data["billed"] = $data["billed"] === "true" ? true : false;
+        $data["breakfast"] = $data["breakfast"] === "true" ? true : false;
+        $data["lunch"] = $data["lunch"] === "true" ? true : false;
+        $data["dinner"] = $data["dinner"] === "true" ? true : false;
+
         $stmt->bindValue(":customer_id", $data["customer_id"], PDO::PARAM_INT);
         $stmt->bindValue(":checkin", date("Y-m-d", strtotime($data["checkin"])), PDO::PARAM_STR);
         $stmt->bindValue(":checkout", date("Y-m-d", strtotime($data["checkout"])), PDO::PARAM_STR);
         $stmt->bindValue(":room_id", $data["room_id"], PDO::PARAM_INT);
-        $stmt->bindValue(":billed", $data["billed"], PDO::PARAM_BOOL);
-        $stmt->bindValue(":breakfast". $data["breakfast"], PDO::PARAM_BOOL);
-        $stmt->bindValue(":lunch", $data["lunch"], PDO::PARAM_BOOL);
-        $stmt->bindValue(":dinner", $data["dinner"], PDO::PARAM_BOOL);
+        $stmt->bindValue(":billed", (bool)$data["billed"] ?? false, PDO::PARAM_BOOL);
+        $stmt->bindValue(":breakfast", (bool)$data["breakfast"] ?? false, PDO::PARAM_BOOL);
+        $stmt->bindValue(":lunch", (bool)$data["lunch"] ?? false, PDO::PARAM_BOOL);
+        $stmt->bindValue(":dinner", (bool)$data["dinner"] ?? false, PDO::PARAM_BOOL);
 
         $stmt->execute();
 
@@ -208,11 +215,11 @@ class ReceptionGateway{
         }
 
         if(array_key_exists("checkin", $data)){
-            $fields["checkin"] = [date("Y-m-d H:i:s", $data["checkin"]), PDO::PARAM_STR];
+            $fields["checkin"] = [date("Y-m-d", $data["checkin"]), PDO::PARAM_STR];
         }
 
         if(array_key_exists("checkout", $data)){
-            $fields["checkout"] = [date("Y-m-d H:i:s", $data["checkout"]), PDO::PARAM_STR];
+            $fields["checkout"] = [date("Y-m-d", $data["checkout"]), PDO::PARAM_STR];
         }
 
         if(array_key_exists("room_id")){

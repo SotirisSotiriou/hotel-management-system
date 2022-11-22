@@ -22,15 +22,15 @@ class ReceptionController{
             if($method === "POST"){                
                 if($service === "reservation"){
                     $output = $this->gateway->addReservation($data);
-                    $this->respondReservationCreated($id);
+                    $this->respondReservationCreated($output);
                 }
                 else if($service === "room"){
                     $output = $this->gateway->createNewRoom($data);
-                    $this->respondRoomCreated($id);
+                    $this->respondRoomCreated($output);
                 }
                 else if($service === "customer"){
                     $output = $this->gateway->newCustomer($data);
-                    $this->respondCustomerCreated($id);
+                    $this->respondCustomerCreated($output);
                 }
                 else{
                     $this->respondServiceNotFound();
@@ -292,14 +292,14 @@ class ReceptionController{
                 if(empty($data["checkin"])){
                     $errors[] = "checkin is required";
                 }
-                else if(!preg_match("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkin"])){
+                else if(!preg_match("$^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkin"])){
                     $errors[] = "checkin invalid format";
                 }
 
                 if(empty($data["checkout"])){
                     $errors[] = "checkout is required";
                 }
-                else if(!preg_match("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkout"])){
+                else if(!preg_match("$^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkout"])){
                     $errors[] = "checkout invalid format";
                 }
 
@@ -313,28 +313,28 @@ class ReceptionController{
                 if(empty($data["billed"])){
                     $errors[] = "billed is required";
                 }
-                else if(filter_var($data["billed"], FILTER_VALIDATE_BOOLEAN) == false){
+                else if(!$data["billed"] === "true" and !$data["billed"] === "false"){
                     $errors[] = "billed invalid format";
                 }
 
                 if(empty($data["breakfast"])){
                     $errors[] = "breakfast is required";
                 }
-                else if(filter_var($data["breakfast"], FILTER_VALIDATE_BOOLEAN) == false){
+                else if(!$data["breakfast"] === "true" and !$data["breakfast"] === "false"){
                     $errors[] = "breakfast invalid format";
                 }
 
                 if(empty($data["lunch"])){
                     $errors[] = "lunch is required";
                 }
-                else if(filter_var($data["lunch"], FILTER_VALIDATE_BOOLEAN) == false){
+                else if(!$data["lunch"] === "true" and !$data["lunch"] === "false"){
                     $errors[] = "lunch invalid format";
                 }
 
                 if(empty($data["dinner"])){
                     $errors[] = "dinner is required";
                 }
-                else if(filter_var($data["dinner"], FILTER_VALIDATE_BOOLEAN) == false){
+                else if(!$data["dinner"] === "true" and !$data["dinner"] === "false"){
                     $errors[] = "dinner invalid format";
                 }
             }
@@ -380,12 +380,12 @@ class ReceptionController{
                     }
                 }
                 if(!empty($data["checkin"])){
-                    if(!preg_match("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkin"])){
+                    if(!preg_match("$^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkin"])){
                         $errors[] = "checkin invalid format";
                     }
                 }
                 if(!empty($data["checkout"])){
-                    if(!preg_match("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkout"])){
+                    if(!preg_match("$^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", $data["checkout"])){
                         $errors[] = "checkout invalid format";
                     }
                 }
