@@ -92,7 +92,30 @@ class ReceptionController{
                     }
                     else if($service === "room"){
                         if($id === "available"){
-                            //TODO
+                            //validation errors for available rooms request
+                            $json = file_get_contents("php://input");
+                            $input = (array) json_decode($json);
+                            $errors = [];
+                            if(empty($input["start_date"])){
+                                $errors[] = "start_date is required";
+                            }
+                            if(empty($input["end_date"])){
+                                $errors[] = "end_date is required";
+                            }
+
+                            if(empty($errors)){
+                                $rooms = $this->gateway->getAllAvailableRooms($input);
+                                if($rooms == false){
+                                    $this->respondEmptyData();
+                                }
+                                else{
+                                    echo json_encode($rooms);
+                                }
+                            }
+                            else{
+                                $this->respondUnprocessableEntity($errors);
+                                return;
+                            }
                         }
                         else if(!filter_var($id, FILTER_VALIDATE_INT) === false){
                             $room = $this->gateway->getRoomByID((int)$id);

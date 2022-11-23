@@ -95,7 +95,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password_hash`, `name`) VALUES
-(1, 'sotos', '$2y$10$i1PCdEplRX11sCS6uEyek.j.UCtwwmXsZp68..KbmQ.3GAwB3JNDC', 'Sotiris');
+(1, 'admin', '$2y$10$i1PCdEplRX11sCS6uEyek.j.UCtwwmXsZp68..KbmQ.3GAwB3JNDC', 'admin');
+-- password: sotos2000
 
 --
 -- Indexes for dumped tables

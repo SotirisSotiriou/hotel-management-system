@@ -47,9 +47,39 @@ class ReceptionGateway{
         return $data;
     }
 
-    public function getAllAvailableRooms(): array | false{
-        //TODO
+    public function getAllAvailableRooms(array $data): array | false{
+        $sql = "SELECT * 
+                FROM room
+                WHERE id NOT IN (
+                    SELECT room_id AS id
+                    FROM room_reservation
+                    WHERE (:start_date1 >= checkin AND :start_date2 <= checkout) OR
+                    (:end_date1 >= checkin AND :end_date2 <= checkout) OR
+                    (:start_date3 <= checkin AND :end_date3 >= checkout)
+                )";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindValue(":start_date1", $data["start_date"], PDO::PARAM_STR);
+        $stmt->bindValue(":start_date2", $data["start_date"], PDO::PARAM_STR);
+        $stmt->bindValue(":end_date1", $data["end_date"], PDO::PARAM_STR);
+        $stmt->bindValue(":end_date2", $data["end_date"], PDO::PARAM_STR);
+        $stmt->bindValue(":start_date3", $data["start_date"], PDO::PARAM_STR);
+        $stmt->bindValue(":end_date3", $data["end_date"], PDO::PARAM_STR);
 
+        $stmt->execute();
+
+        $output = [];
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            $output[] = $row;
+        }
+
+        if(empty($output)){
+            return false;
+        }
+
+        return $output;
     }
 
 
