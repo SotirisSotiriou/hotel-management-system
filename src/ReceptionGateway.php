@@ -11,7 +11,8 @@ class ReceptionGateway{
 
     public function getAllRooms(): array | false{
         $sql = "SELECT * 
-                FROM room";
+                FROM room
+                ORDER BY number ASC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -56,7 +57,8 @@ class ReceptionGateway{
                     WHERE (:start_date1 >= checkin AND :start_date2 <= checkout) OR
                     (:end_date1 >= checkin AND :end_date2 <= checkout) OR
                     (:start_date3 <= checkin AND :end_date3 >= checkout)
-                )";
+                )
+                ORDER BY number ASC";
         
         $stmt = $this->conn->prepare($sql);
         
@@ -161,7 +163,7 @@ class ReceptionGateway{
     public function getAllReservations(): array | false{
         $sql = "SELECT *
                 FROM room_reservation
-                ORDER BY id DESC";
+                ORDER BY checkin DESC";
         
         $stmt = $this->conn-prepare($sql);
 
@@ -298,7 +300,9 @@ class ReceptionGateway{
 //Customer features
 
     public function getAllCustomers(): array{
-        $sql = "SELECT * FROM customer";
+        $sql = "SELECT * 
+                FROM customer
+                ORDER BY id ASC";
 
         $stmt - $this->conn->prepare($sql);
 
